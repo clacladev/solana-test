@@ -45,7 +45,10 @@ const swapTransactionResponse = await fetch(
       // feeAccount is optional. Use if you want to charge a fee.  feeBps must have been passed in /quote API.
       // feeAccount: "fee_account_public_key"
       // custom priority fee
-      prioritizationFeeLamports: "auto", // or custom lamports: 1000
+      // prioritizationFeeLamports: "auto", // in normal conditions, use auto
+      prioritizationFeeLamports: {
+        autoMultiplier: 2, // when there's a lot of congestions for the pair, double the suggested fee
+      },
     }),
   }
 );
@@ -69,12 +72,12 @@ const txid = await connection.sendRawTransaction(rawTransaction, {
   skipPreflight: true,
   maxRetries: 2,
 });
-console.log(`--> Tx details: https://solscan.io/tx/${txid}`);
 console.log(`--> Waiting for confirmation...`);
 
+// 6. Wait for confirmation
 await connection.confirmTransaction({
   blockhash: latestBlockHash.blockhash,
   lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
   signature: txid,
 });
-console.log(`Tx confirmed`);
+console.log(`--> Tx confirmed! Details: https://solscan.io/tx/${txid}`);

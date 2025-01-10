@@ -8,7 +8,7 @@ First, create a `.env.local` file in the root directory with the following conte
 
 ```
 PRIVATE_KEY="xxx" # Your Solana wallet private key
-QUICKNODE_SOLANA_API_TOKEN="xxx" # From https://dashboard.quicknode.com/endpoints/425288/security
+QUICKNODE_SOLANA_API_TOKEN="xxx" # From https://dashboard.quicknode.com/endpoints/
 ```
 
 ## Installation
