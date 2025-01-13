@@ -25,21 +25,24 @@ const fetcher = async ([quote, userPublicKey]: [
       },
     }),
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch swap transaction");
+  }
   const { swapTransaction } = await response.json();
   return swapTransaction;
 };
 
-type UseQuoteProps = {
+type UseSwapTxProps = {
   quote: unknown | undefined;
   userPublicKey: string | undefined;
   isEnabled: boolean;
 };
 
-export default function useQuote({
+export default function useSwapTx({
   quote,
   userPublicKey,
   isEnabled,
-}: UseQuoteProps) {
+}: UseSwapTxProps) {
   const arePropsValid = quote && userPublicKey;
 
   return useSWR(
