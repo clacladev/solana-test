@@ -10,7 +10,7 @@ export default function ConnectWalletButton() {
     <button
       disabled={isConnected}
       onClick={login}
-      className="btn bg-green-400 border-green-500 border-2 rounded-md"
+      className="bg-blue-500 text-white px-4 py-2 rounded-md"
     >
       Connect wallet
     </button>

@@ -104,7 +104,7 @@ export default function Home() {
               {quoteData && (
                 <div>
                   <div>Quote:</div>
-                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96">
+                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96 dark:bg-gray-800">
                     {JSON.stringify(quoteData, null, 2)}
                   </pre>
                 </div>
@@ -132,7 +132,7 @@ export default function Home() {
               {swapTxData && (
                 <div>
                   <div>Swap tx:</div>
-                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96">
+                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96 dark:bg-gray-800">
                     {JSON.stringify(swapTxData, null, 2)}
                   </pre>
                 </div>
@@ -164,7 +164,7 @@ export default function Home() {
               {txId && (
                 <div>
                   <div>Tx id:</div>
-                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96">
+                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96 dark:bg-gray-800">
                     {txId}
                   </pre>
                 </div>

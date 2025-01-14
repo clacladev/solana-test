@@ -11,7 +11,7 @@ export default function DisconnectWalletButton() {
   return (
     <button
       onClick={logout}
-      className="bg-gray-200 border-gray-300 border-2 rounded-md cursor-default"
+      className="bg-gray-500 dark:bg-gray-800 text-white px-4 py-2 rounded-md"
     >
       Disconnect wallet
     </button>
