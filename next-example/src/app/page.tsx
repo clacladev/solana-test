@@ -1,11 +1,12 @@
 "use client";
 
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useSolanaWallets } from "@privy-io/react-auth";
 import ConnectWalletButton from "./components/ConnectWalletButton";
 import DisconnectWalletButton from "./components/DisconnectWalletButton";
 import useQuote from "./hooks/useQuote";
 import { useState } from "react";
 import useSwapTx from "./hooks/useSwapTx";
+import useSendSwapTx from "./hooks/useSendSwapTx";
 
 const SELL_TOKEN_ADDRESS = "So11111111111111111111111111111111111111112"; // Sol
 const BUY_TOKEN_ADDRESS = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
@@ -13,12 +14,16 @@ const SELL_AMOUNT = 1000000;
 const SLIPPAGE_BPS = 50;
 
 export default function Home() {
-  const { ready, authenticated, user } = usePrivy();
+  const { ready, authenticated } = usePrivy();
+  const { wallets } = useSolanaWallets();
+
   const [shouldFetchQuote, setShouldFetchQuote] = useState(false);
   const [shouldFetchSwapTx, setShouldFetchSwapTx] = useState(false);
+  const [shouldSendSwapTx, setShouldSendSwapTx] = useState(false);
+  const [currentTxId, setCurrentTxId] = useState<string | undefined>(undefined);
 
   const isConnected = ready && authenticated;
-  const userAddress = user?.wallet?.address;
+  const wallet = wallets[0];
 
   const isFetchQuoteEnabled = isConnected && shouldFetchQuote;
   const { data: quoteData, isLoading: isLoadingQuote } = useQuote({
@@ -36,8 +41,30 @@ export default function Home() {
     error: swapTxError,
   } = useSwapTx({
     quote: quoteData,
-    userPublicKey: userAddress,
+    userPublicKey: wallet?.address,
     isEnabled: isFetchSwapTxEnabled,
+  });
+
+  const isSendSwapTxEnabled =
+    isConnected &&
+    quoteData &&
+    shouldFetchSwapTx &&
+    swapTxData &&
+    shouldSendSwapTx &&
+    !currentTxId;
+  const {
+    data: txId,
+    isLoading: isLoadingSendSwapTx,
+    error: sendSwapTxError,
+  } = useSendSwapTx({
+    swapTx: swapTxData,
+    wallet,
+    isEnabled: isSendSwapTxEnabled,
+    onSuccess: (txId) => {
+      setCurrentTxId(txId);
+      setShouldSendSwapTx(false);
+    },
+    onError: () => setShouldSendSwapTx(false),
   });
 
   return (
@@ -77,7 +104,7 @@ export default function Home() {
               {quoteData && (
                 <div>
                   <div>Quote:</div>
-                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md h-48 overflow-auto w-96">
+                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96">
                     {JSON.stringify(quoteData, null, 2)}
                   </pre>
                 </div>
@@ -104,8 +131,8 @@ export default function Home() {
 
               {swapTxData && (
                 <div>
-                  <div>Quote:</div>
-                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md h-48 overflow-auto w-96">
+                  <div>Swap tx:</div>
+                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96">
                     {JSON.stringify(swapTxData, null, 2)}
                   </pre>
                 </div>
@@ -113,6 +140,40 @@ export default function Home() {
 
               {swapTxError && (
                 <div className="text-red-500">Error: {swapTxError.message}</div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* --- Send swap step --- */}
+        {isConnected && swapTxData && (
+          <section className="flex flex-col gap-4">
+            <h2 className="text-2xl font-bold">4. Send swap tx</h2>
+            <div className="flex flex-col gap-2">
+              {!shouldSendSwapTx && !txId && (
+                <button
+                  onClick={() => setShouldSendSwapTx(true)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Send swap tx
+                </button>
+              )}
+
+              {isLoadingSendSwapTx && "Sending swap tx..."}
+
+              {txId && (
+                <div>
+                  <div>Tx id:</div>
+                  <pre className="font-mono text-xs bg-gray-100 p-4 rounded-md max-h-48 overflow-auto w-96">
+                    {txId}
+                  </pre>
+                </div>
+              )}
+
+              {sendSwapTxError && (
+                <div className="text-red-500">
+                  Error: {sendSwapTxError.message}
+                </div>
               )}
             </div>
           </section>

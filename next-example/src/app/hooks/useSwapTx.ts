@@ -1,6 +1,7 @@
 import useSWR from "swr";
 
-const fetcher = async ([quote, userPublicKey]: [
+const fetcher = async ([, quote, userPublicKey]: [
+  key: string,
   quote: unknown,
   userPublicKey: string
 ]) => {
@@ -46,7 +47,9 @@ export default function useSwapTx({
   const arePropsValid = quote && userPublicKey;
 
   return useSWR(
-    isEnabled && arePropsValid ? [quote, userPublicKey] : undefined,
+    isEnabled && arePropsValid
+      ? ["useSwapTx", quote, userPublicKey]
+      : undefined,
     fetcher
   );
 }
