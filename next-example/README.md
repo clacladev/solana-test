@@ -38,7 +38,3 @@ Useful docs:
 - https://station.jup.ag/docs/APIs/swap-api#guide-for-v6-swap-api-code-example
 - https://docs.privy.io/guide/react/wallets/usage/solana/
 - https://docs.privy.io/guide/expo/embedded/solana/usage
-
-```
-
-```
