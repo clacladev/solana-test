@@ -1,23 +1,35 @@
 import { ConnectedSolanaWallet } from "@privy-io/react-auth";
-import { Connection, VersionedTransaction } from "@solana/web3.js";
+import {
+  BlockhashWithExpiryBlockHeight,
+  VersionedTransaction,
+} from "@solana/web3.js";
 import { useEffect, useState } from "react";
+import { getConnection } from "../utils";
 
-const connection = new Connection(
-  `https://tame-wiser-ensemble.solana-mainnet.quiknode.pro/${process.env.QUICKNODE_SOLANA_API_TOKEN}/`
-);
+async function sendTransaction(
+  swapTx: string,
+  wallet: ConnectedSolanaWallet
+): Promise<UseSendSwapTxData> {
+  const blockhash = await getConnection().getLatestBlockhash();
 
-async function sendTransaction(swapTx: string, wallet: ConnectedSolanaWallet) {
   const swapTxBuffer = Buffer.from(swapTx, "base64");
   const transaction = VersionedTransaction.deserialize(swapTxBuffer);
-  return await wallet.sendTransaction!(transaction, connection);
+  const txId = await wallet.sendTransaction(transaction, getConnection());
+
+  return { txId, blockhash };
 }
 
 type UseSendSwapTxProps = {
   swapTx: string | undefined;
   wallet: ConnectedSolanaWallet | undefined;
   isEnabled: boolean;
-  onSuccess?: (txId: string) => void;
+  onSuccess?: (data: UseSendSwapTxData) => void;
   onError?: (error: Error) => void;
+};
+
+type UseSendSwapTxData = {
+  txId: string;
+  blockhash: BlockhashWithExpiryBlockHeight;
 };
 
 export default function useSendSwapTx({
@@ -27,7 +39,7 @@ export default function useSendSwapTx({
   onSuccess = undefined,
   onError = undefined,
 }: UseSendSwapTxProps) {
-  const [data, setData] = useState<string | undefined>(undefined);
+  const [data, setData] = useState<UseSendSwapTxData | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | undefined>(undefined);
 
@@ -36,11 +48,13 @@ export default function useSendSwapTx({
     if (!isEnabled || !arePropsValid || isLoading) return;
 
     setIsLoading(true);
+    setError(undefined);
+
     sendTransaction(swapTx, wallet)
-      .then((txId) => {
-        setData(txId);
+      .then((data) => {
+        setData(data);
         setIsLoading(false);
-        onSuccess?.(txId);
+        onSuccess?.(data);
       })
       .catch((error) => {
         setError(error);

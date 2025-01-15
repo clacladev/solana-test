@@ -33,17 +33,17 @@ const fetcher = async ([, quote, userPublicKey]: [
   return swapTransaction;
 };
 
-type UseSwapTxProps = {
+type UseFetchSwapTxProps = {
   quote: unknown | undefined;
   userPublicKey: string | undefined;
   isEnabled: boolean;
 };
 
-export default function useSwapTx({
+export default function useFetchSwapTx({
   quote,
   userPublicKey,
   isEnabled,
-}: UseSwapTxProps) {
+}: UseFetchSwapTxProps) {
   const arePropsValid = quote && userPublicKey;
 
   return useSWR(
