@@ -4,14 +4,7 @@ Example Next.js app to swap tokens on Solana using Jupiter APIs.
 
 ## Create the secrets file
 
-First, create a `.env.local` file in the root directory with the following content:
-
-```
-NEXT_PUBLIC_PRIVY_APP_ID="" # From https://dashboard.privy.io/
-PRIVY_APP_SECRET=""
-NEXT_PUBLIC_QUICKNODE_SOLANA_API_TOKEN="xxx" # From https://dashboard.quicknode.com/endpoints/
-
-```
+First, create a `.env.local` file in the root directory by copying the template `.env.example`. Then fill it up with the required secrets.
 
 ## Installation
 

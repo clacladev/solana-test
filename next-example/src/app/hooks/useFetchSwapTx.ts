@@ -14,7 +14,7 @@ const fetcher = async ([, quote, userPublicKey]: [
       // quoteResponse from /quote api
       quoteResponse: quote,
       // user public key to be used for the swap
-      userPublicKey, //: wallet.publicKey.toString(),
+      userPublicKey,
       // auto wrap and unwrap SOL. default is true
       wrapAndUnwrapSol: true,
       // feeAccount is optional. Use if you want to charge a fee.  feeBps must have been passed in /quote API.
@@ -22,8 +22,10 @@ const fetcher = async ([, quote, userPublicKey]: [
       // custom priority fee
       // prioritizationFeeLamports: "auto", // in normal conditions, use auto
       prioritizationFeeLamports: {
-        autoMultiplier: 2, // when there's a lot of congestions for the pair, double the suggested fee
+        autoMultiplier: 3, // when there's a lot of congestions for the pair, double the suggested fee
       },
+      // account to track the swap transaction for analytics
+      trackingAccount: process.env.NEXT_PUBLIC_TRACKING_ACCOUNT_ADDRESS,
     }),
   });
   if (!response.ok) {
